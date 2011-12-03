@@ -73,7 +73,7 @@ private[etypedactors] final class UnresolvedPromise[T] extends Promise[T] {
 
 }
 
-final class Resolver[T] private[etypedactors] (val promise: UnresolvedPromise[T], val sender: ActorType) extends Serializable {
+private[etypedactors] final class Resolver[T] (val promise: UnresolvedPromise[T], val sender: ActorType) extends Serializable {
 
   def resolve(result: T) {
     sender ! Resolution(promise, result)

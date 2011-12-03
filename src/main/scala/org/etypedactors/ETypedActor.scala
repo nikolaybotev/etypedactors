@@ -32,7 +32,7 @@ object ETypedActor {
           return null
         case PromiseClass =>  // two-way with Resolver
           val (promise, resolver) = Promise[Any]()
-          actor ! MethodCall(method, args, resolver)
+          actor ! TwoWayMethodCall(method, args, resolver)
           return promise
         case _ => 
           throw new IllegalAccessError("Only void methods or methods returning a Promise are supported. " +

@@ -7,7 +7,7 @@ import org.etypedactors.ActorType
 private class AkkaActorType(makeProxy: => AnyRef, makeActorRef: => ActorRef) {
   lazy val proxy = makeProxy
   lazy val actorRef = makeActorRef
-  def !(message: Any) = actorRef ! message
+  def !(message: Any) = actorRef.! (message) (null) // do not care about Akka sender
 }
 
 class AkkaEtypedActorFactory {

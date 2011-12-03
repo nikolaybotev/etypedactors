@@ -3,7 +3,7 @@ package org.etypedactors.akka
 import akka.actor.Actor
 import org.etypedactors.ActorType
 import org.etypedactors.OneWayMethodCall
-import org.etypedactors.MethodCall
+import org.etypedactors.TwoWayMethodCall
 import org.etypedactors.Resolution
 import org.etypedactors.Smashing
 import org.etypedactors.ETypedActor
@@ -35,7 +35,7 @@ class AkkaEtypedActor(makeImpl: => Any, makeActor: => ActorType) extends Actor {
     }
 
     // Two-way with resolver
-    case MethodCall(m, args, resolver) => withSelf {
+    case TwoWayMethodCall(m, args, resolver) => withSelf {
       try {
         val resultPromise = m.invoke(impl, args:_*).asInstanceOf[Promise[_]]
         resultPromise.when({ result => resolver.resolve(result) }, { case ex => resolver.smash(ex) })

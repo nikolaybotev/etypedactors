@@ -8,7 +8,7 @@ package object etypedactors {
   }
   
   type ActorFactoryType = {
-    def createActor[T](impl: => Any, proxy: => T): ActorType
+    def createActor(impl: => Any, proxy: => AnyRef): ActorType
   }
   
 }

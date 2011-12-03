@@ -4,17 +4,19 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
-object ETypedActor extends App {
+object ETypedActor {
 
   def create(actorFactory: ActorFactoryType) = new ETypedActor(actorFactory)
 
-  def self[T]: T = {
+  def currentActor[T]: T = {
     val current = currentActor
     (if (current == null) null else current.proxy).asInstanceOf[T]
   }
+  
+  def fulfill[T](value: T) = new ResolvedPromise(value)
 
   private val currentActorHolder = new ThreadLocal[ActorType]()
-  
+
   private[etypedactors] def setCurrentActor(actor: ActorType) { currentActorHolder.set(actor) }
 
   @inline implicit private def currentActor: ActorType = currentActorHolder.get()

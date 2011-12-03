@@ -16,17 +16,24 @@ trait PromiseListener[-T] {
 }
 
 final class Promise[T] private[etypedactors] extends Serializable {
-  
+
   private var listeners = collection.immutable.List[PromiseListener[T]]()
-  
+
   def when(listener: PromiseListener[T]) {
     listeners = listeners :+ listener
   }
-  
+
+  def when(resultHandler: T => Unit)(exceptionHandler: Exception => Unit = {ex=>}) {
+    when(new PromiseListener[T] {
+      def onResult(result: T) = resultHandler(result)
+      def onException(exception: Exception) = exceptionHandler(exception)
+    })
+  }
+
   private[etypedactors] def notifyResolved(result: T) {
     for (listener <- listeners) listener onResult result
   }
-  
+
   private [etypedactors] def notifySmashed(exception: Exception) {
     for (listener <- listeners) listener onException exception
   }

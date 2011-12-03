@@ -8,9 +8,16 @@ object ETypedActor extends App {
 
   def create(actorFactory: ActorFactoryType) = new ETypedActor(actorFactory)
 
-  def self[T]: T = null.asInstanceOf[T] // FIXME
+  def self[T]: T = {
+    val current = currentActor
+    (if (current == null) null else current.proxy).asInstanceOf[T]
+  }
 
-  implicit private def currentEtypedActor: ActorType = null // FIXME
+  private val currentActorHolder = new ThreadLocal[ActorType]()
+  
+  private[etypedactors] def setCurrentActor(actor: ActorType) { currentActorHolder.set(actor) }
+
+  @inline implicit private def currentActor: ActorType = currentActorHolder.get()
 
   private val PromiseClass = classOf[Promise[_]]
 
@@ -36,12 +43,13 @@ object ETypedActor extends App {
 }
 
 class ETypedActor(actorFactory: ActorFactoryType) {
-  
+
   def createActor[R <: AnyRef, T <: R](interface: Class[R], impl: => T): R = {
-    val actor = actorFactory.createActor(impl)
-    val handler = new ETypedActor.ActorInvocationHandler(actor)
-    val proxy = Proxy.newProxyInstance(interface.getClassLoader(), Array[Class[_]](interface), handler)
-    return proxy.asInstanceOf[R]
+    lazy val actor: ActorType = actorFactory.createActor(impl, {
+      val handler: ETypedActor.ActorInvocationHandler = new ETypedActor.ActorInvocationHandler(actor)
+      Proxy.newProxyInstance(interface.getClassLoader(), Array[Class[_]](interface), handler)
+    })
+    return actor.proxy.asInstanceOf[R]
   }
-  
+
 }

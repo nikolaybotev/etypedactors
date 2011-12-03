@@ -1,4 +1,5 @@
 package examples
+
 import org.etypedactors.ETypedActor
 import org.etypedactors.Promise
 import org.etypedactors.akka.AkkaEtypedActorFactory
@@ -58,5 +59,11 @@ object BasicExample extends App {
   val client = etypedSystem.createActor(classOf[Client], new ClientActor)
 
   client.go(service)
+
+  Thread.sleep(2000)
+  log("Shutting down...")
+  etypedSystem.stop(client)
+  etypedSystem.stop(service)
+  log("Shutdown complete.")
 
 }

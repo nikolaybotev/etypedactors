@@ -9,6 +9,7 @@ package object etypedactors {
   
   type ActorFactoryType = {
     def createActor(impl: => Any, proxy: => AnyRef): ActorType
+    def stop(actor: ActorType)
   }
   
 }

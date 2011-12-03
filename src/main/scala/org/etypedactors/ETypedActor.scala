@@ -23,7 +23,7 @@ object ETypedActor {
 
   private val PromiseClass = classOf[Promise[_]]
 
-  private class ActorInvocationHandler(actor: ActorType) extends InvocationHandler {
+  private class ActorInvocationHandler(val actor: ActorType) extends InvocationHandler {
 
     def invoke(proxy: Any, method: Method, args: Array[AnyRef]): AnyRef = {
       method.getReturnType match {
@@ -52,6 +52,13 @@ class ETypedActor(actorFactory: ActorFactoryType) {
       Proxy.newProxyInstance(interface.getClassLoader(), Array[Class[_]](interface), handler)
     })
     return actor.proxy.asInstanceOf[R]
+  }
+
+  def stop(etypedActor: AnyRef) {
+    Proxy.getInvocationHandler(etypedActor) match {
+      case ic: ETypedActor.ActorInvocationHandler => actorFactory.stop(ic.actor)
+      case _ => throw new IllegalArgumentException("Not an etyped actor - " + etypedActor)
+    }
   }
 
 }

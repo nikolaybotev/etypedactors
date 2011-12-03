@@ -19,5 +19,10 @@ class AkkaEtypedActorFactory {
     actor.actorRef.start()
     return actor
   }
+  
+  def stop(actor: ActorType) = actor match {
+    case a:AkkaActorType => a.actorRef.stop
+    case _ => throw new IllegalArgumentException("Not an Akka actor - " + actor)
+  }
 
 }

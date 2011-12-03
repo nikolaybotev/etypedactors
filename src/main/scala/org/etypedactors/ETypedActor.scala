@@ -56,7 +56,7 @@ class ETypedActor(actorFactory: ActorFactoryType) {
 
   def stop(etypedActor: AnyRef) {
     Proxy.getInvocationHandler(etypedActor) match {
-      case ic: ETypedActor.ActorInvocationHandler => actorFactory.stop(ic.actor)
+      case ic: ETypedActor.ActorInvocationHandler => actorFactory.stopActor(ic.actor)
       case _ => throw new IllegalArgumentException("Not an etyped actor - " + etypedActor)
     }
   }

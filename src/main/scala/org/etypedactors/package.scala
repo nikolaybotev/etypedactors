@@ -6,10 +6,10 @@ package object etypedactors {
     def !(message: Any): Unit
     val proxy: AnyRef
   }
-  
+
   type ActorFactoryType = {
     def createActor(impl: => Any, proxy: => AnyRef): ActorType
-    def stop(actor: ActorType)
+    def stopActor(actor: ActorType)
   }
-  
+
 }

@@ -13,3 +13,8 @@ libraryDependencies ++= Seq(
 )
 
 ivyConfigurations += Default.extend (Compile, Sources, Docs)
+
+artifact in (Compile, packageDoc) ~= { _.copy(`type` = "javadoc") }
+
+artifact in (Compile, packageSrc) ~= { _.copy(`type` = "source") }
+

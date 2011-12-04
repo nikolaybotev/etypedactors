@@ -48,13 +48,13 @@ private[etypedactors] final class ResolvedPromise[T](result: T) extends Promise[
 private[etypedactors] final class UnresolvedPromise[T] extends Promise[T] {
 
   private var listeners: List[PromiseListener[T]] = collection.immutable.List[PromiseListener[T]]()
-  
+
   private var resolution: Either[T, Exception] = _
-  
+
   def isResolved = resolution != null
-  
+
   def isSmashed = resolution match { case Right(_) => true case _ => false }
-  
+
   def getValue = resolution match { case Left(result) => result }
 
   def getException = resolution match { case Right(exception) => exception }
@@ -82,5 +82,5 @@ private[etypedactors] final class Resolver[T] (val promise: UnresolvedPromise[T]
   def smash(exception: Exception) {
     sender ! Smashing(promise, exception)
   }
-  
+
 }

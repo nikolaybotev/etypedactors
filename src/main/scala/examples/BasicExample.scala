@@ -9,7 +9,7 @@ object BasicExample extends App {
   def log(msg: String) {
     println("[" + Thread.currentThread.getName + "] " + msg)
   }
-  
+
   trait Service {
     def square(x: Int): Promise[Int]
   }

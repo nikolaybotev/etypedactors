@@ -12,7 +12,7 @@ object ETypedActor {
     val current = currentActor
     (if (current == null) null else current.proxy).asInstanceOf[T]
   }
-  
+
   def fulfill[T](value: T) = new ResolvedPromise(value)
 
   private val currentActorHolder = new ThreadLocal[ActorType]()
@@ -34,7 +34,7 @@ object ETypedActor {
           val (promise, resolver) = Promise[Any]()
           actor ! TwoWayMethodCall(method, args, resolver)
           return promise
-        case _ => 
+        case _ =>
           throw new IllegalAccessError("Only void methods or methods returning a Promise are supported. " +
             "Problematic method: " + method)
       }

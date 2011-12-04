@@ -23,13 +23,14 @@ object ETypedActor {
 
 }
 
-class ETypedActor(actorFactory: ActorFactory[_ <: ActorType]) {
+class ETypedActor[X <: ActorType](actorFactory: ActorFactory[X]) {
 
   def createActor[R <: AnyRef, T <: R](interface: Class[R], impl: => T): R = {
-    lazy val actor: ActorWithProxyType = actorFactory.createActor(impl, {
+    lazy val actor: ActorWithProxy[X] = new ActorWithProxy(actorFactory.createActor(impl, actor), {
       val handler = new ETypedActorInvocationHandler(actor.actorRef)
       Proxy.newProxyInstance(interface.getClassLoader(), Array[Class[_]](interface), handler)
     })
+    actorFactory.startActor(actor.actorRef)
     return actor.proxy.asInstanceOf[R]
   }
 

@@ -2,9 +2,7 @@ package org.etypedactors
 
 import scala.reflect.BeanProperty
 
-case class Future[T](
-    @BeanProperty promise: Promise[T],
-    @BeanProperty resolver: Resolver[T])
+case class Future[T](promise: Promise[T], resolver: Resolver[T])
 
 object Promise {
 

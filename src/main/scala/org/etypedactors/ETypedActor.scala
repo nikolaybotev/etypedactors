@@ -6,7 +6,7 @@ import java.lang.reflect.Proxy
 
 object ETypedActor {
 
-  def create(actorFactory: ActorFactoryType) = new ETypedActor(actorFactory)
+  def create(actorFactory: ActorFactory) = new ETypedActor(actorFactory)
 
   def currentActor[T]: T = {
     val current = currentActorInternal
@@ -23,7 +23,7 @@ object ETypedActor {
 
 }
 
-class ETypedActor(actorFactory: ActorFactoryType) {
+class ETypedActor(actorFactory: ActorFactory) {
 
   def createActor[R <: AnyRef, T <: R](interface: Class[R], impl: => T): R = {
     lazy val actor: ActorType = actorFactory.createActor(impl, {

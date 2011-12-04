@@ -7,7 +7,7 @@ package object etypedactors {
     val proxy: AnyRef
   }
 
-  type ActorFactoryType = {
+  trait ActorFactory {
     def createActor(impl: => Any, proxy: => AnyRef): ActorType
     def stopActor(actor: ActorType)
   }

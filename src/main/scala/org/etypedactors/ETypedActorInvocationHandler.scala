@@ -15,12 +15,15 @@ class ETypedActorInvocationHandler(val actor: ActorType) extends InvocationHandl
         actor ! OneWayMethodCall(method, args)
         return null
       case ETypedActorInvocationHandler.PromiseClass =>  // two-way with Resolver
-        val (promise, resolver) = Promise[Any]()(ETypedActor.currentActorInternal.actorRef)
+        val sender = ETypedActor.currentActorWithProxy
+        if (sender == null)
+          throw new IllegalArgumentException("No ETypedActor in scope. " +
+          		"Promise-returning actor methods can only be called from other ETyped actors.")
+        val (promise, resolver) = Promise[Any](sender.actorRef)
         actor ! TwoWayMethodCall(method, args, resolver)
         return promise
       case _ =>
-        throw new IllegalAccessError("Only void methods or methods returning a Promise are supported. " +
-          "Problematic method: " + method)
+        throw new IllegalAccessError("ETyped actors only support void methods or methods returning a Promise.")
     }
   }
 

@@ -1,7 +1,7 @@
 package org.etypedactors
 
 object Promise {
-  def apply[T]()(implicit sender: ActorType): (Promise[T], Resolver[T]) = {
+  def apply[T](sender: ActorType): (Promise[T], Resolver[T]) = {
     if (sender == null) throw new IllegalAccessError("No etyped actor in scope.")
 
     val promise = new UnresolvedPromise[T]()

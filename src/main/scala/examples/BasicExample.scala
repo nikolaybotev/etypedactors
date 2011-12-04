@@ -60,6 +60,8 @@ object BasicExample extends App {
 
   client.go(service)
 
+  service.square(100)
+
   Thread.sleep(2000)
   log("Shutting down...")
   etypedSystem.stop(client)

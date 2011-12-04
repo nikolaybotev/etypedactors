@@ -9,7 +9,7 @@ object ETypedActor {
   def create(actorFactory: ActorFactory[_ <: ActorType]) = new ETypedActor(actorFactory)
 
   def currentActor[T]: T = {
-    val current = currentActorInternal
+    val current = currentActorWithProxy
     (if (current == null) null else current.proxy).asInstanceOf[T]
   }
 
@@ -19,7 +19,7 @@ object ETypedActor {
 
   private[etypedactors] def setCurrentActor(actor: ActorWithProxyType) { currentActorHolder.set(actor) }
 
-  @inline implicit private[etypedactors] def currentActorInternal: ActorWithProxyType = currentActorHolder.get()
+  @inline implicit private[etypedactors] def currentActorWithProxy: ActorWithProxyType = currentActorHolder.get()
 
 }
 

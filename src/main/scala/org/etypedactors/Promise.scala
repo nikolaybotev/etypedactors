@@ -17,7 +17,7 @@ object Promise {
   }
 
   def apply[T](): (Promise[T], Resolver[T]) = {
-    val current = ETypedActor.currentActorWithProxy
+    val current = ETypedActorSystem.currentActorWithProxy
     if (current == null)
       throw new IllegalArgumentException("No ETypedActor in scope. " +
           "Promise-returning actor methods can only be called from other ETyped actors. ")

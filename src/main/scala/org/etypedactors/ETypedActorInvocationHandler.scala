@@ -9,7 +9,7 @@ object ETypedActorInvocationHandler {
 
 class ETypedActorInvocationHandler(val actor: ActorType) extends InvocationHandler {
 
-  import ETypedActor._
+  import ETypedActorSystem._
 
   def invoke(proxy: Any, method: Method, args: Array[AnyRef]): AnyRef = method.getReturnType match {
     case Void.TYPE => // one-way fire-and-forget

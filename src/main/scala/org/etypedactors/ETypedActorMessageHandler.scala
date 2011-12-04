@@ -7,11 +7,11 @@ trait ETypedActorMessageHandler {
   protected val impl: Any
 
   @inline private def withMyself(closure: => Unit) {
-      ETypedActor.setCurrentActor(myself)
+      ETypedActorSystem.setCurrentActor(myself)
       try {
         closure
       } finally {
-        ETypedActor.setCurrentActor(null)
+        ETypedActorSystem.setCurrentActor(null)
       }
   }
 

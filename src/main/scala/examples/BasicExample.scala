@@ -1,6 +1,6 @@
 package examples
 
-import org.etypedactors.ETypedActor
+import org.etypedactors.ETypedActorSystem
 import org.etypedactors.Promise
 import org.etypedactors.akka.AkkaETypedActorFactory
 
@@ -19,7 +19,7 @@ object BasicExample extends App {
       log("Service enter")
       val result = process(x)
       log("Service leave")
-      ETypedActor.fulfill(result)
+      ETypedActorSystem.fulfill(result)
     }
 
   }
@@ -36,7 +36,7 @@ object BasicExample extends App {
       val future = service.square(10)
       future when { x =>
         log("Client got future result " + x)
-        ETypedActor.current[Client].other(x + 2)
+        ETypedActorSystem.current[Client].other(x + 2)
         Thread.sleep(1000)
         log("Client future callback done.")
       }
@@ -49,7 +49,7 @@ object BasicExample extends App {
 
   }
 
-  val etypedSystem = ETypedActor.create(new AkkaETypedActorFactory())
+  val etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory())
 
   val service = etypedSystem.createActor(classOf[Service], new ServiceActor)
   val client = etypedSystem.createActor(classOf[Client], new ClientActor)

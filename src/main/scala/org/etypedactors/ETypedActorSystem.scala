@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
-object ETypedActor {
+object ETypedActorSystem {
 
-  def create(actorFactory: ActorFactory[_ <: ActorType]) = new ETypedActor(actorFactory)
+  def create(actorFactory: ActorFactory[_ <: ActorType]) = new ETypedActorSystem(actorFactory)
 
   def current[T]: T = {
     val current = currentActorWithProxy
@@ -23,7 +23,7 @@ object ETypedActor {
 
 }
 
-class ETypedActor[X <: ActorType](actorFactory: ActorFactory[X]) {
+class ETypedActorSystem[X <: ActorType](actorFactory: ActorFactory[X]) {
 
   def createActor[R <: AnyRef, T <: R](interface: Class[R], impl: => T): R = {
     lazy val actor: ActorWithProxy[X] = new ActorWithProxy(actorFactory.createActor(impl, actor), {

@@ -1,7 +1,7 @@
 package examples
 
 import org.etypedactors.Promise
-import org.etypedactors.ETypedActor
+import org.etypedactors.ETypedActorSystem
 import org.etypedactors.akka.AkkaETypedActorFactory
 
 object ChainedFutureExample extends App {
@@ -38,7 +38,7 @@ object ChainedFutureExample extends App {
       log("Client enter")
       service.doit(42) when { x =>
         log("Client got " + x + " in when")
-        ETypedActor.current[Client].got(x)
+        ETypedActorSystem.current[Client].got(x)
         Thread.sleep(500)
         log("Client leaving when")
       }
@@ -47,7 +47,7 @@ object ChainedFutureExample extends App {
     def got(x: Int) { log("Client got " + x) }
   }
 
-  val etypedSystem = ETypedActor.create(new AkkaETypedActorFactory())
+  val etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory())
 
   val service = etypedSystem.createActor(classOf[Service], new ServiceActor)
   val client = etypedSystem.createActor(classOf[Client], new ClientActor)

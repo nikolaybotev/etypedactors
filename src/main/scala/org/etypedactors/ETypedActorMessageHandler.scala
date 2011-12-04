@@ -2,7 +2,7 @@ package org.etypedactors
 
 trait ETypedActorMessageHandler {
 
-  protected val myself: ActorType
+  protected val myself: ActorWithProxyType
 
   protected val impl: Any
 

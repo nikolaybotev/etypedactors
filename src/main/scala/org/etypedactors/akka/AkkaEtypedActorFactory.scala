@@ -4,20 +4,21 @@ import akka.actor.Actor
 import akka.actor.ActorRef
 import org.etypedactors.ActorType
 import org.etypedactors.ActorFactory
+import org.etypedactors.ActorWithProxy
 
-private class AkkaActorType(makeProxy: => AnyRef, makeActorRef: => ActorRef) {
-  lazy val proxy = makeProxy
+class AkkaActorType(makeActorRef: => ActorRef) {
   lazy val actorRef = makeActorRef
   def !(message: Any) = actorRef.! (message) (null) // do not care about Akka sender
 }
 
-class AkkaEtypedActorFactory extends ActorFactory {
+class AkkaEtypedActorFactory extends ActorFactory[AkkaActorType] {
 
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 
-  def createActor(makeImpl: => Any, makeProxy: => AnyRef): ActorType = {
-    lazy val actor: AkkaActorType = new AkkaActorType(makeProxy, createAkkaActor(new AkkaEtypedActor(actor, makeImpl)))
-    actor.actorRef.start()
+  def createActor(makeImpl: => Any, makeProxy: => AnyRef): ActorWithProxy[AkkaActorType] = {
+    lazy val actor: ActorWithProxy[AkkaActorType] = new ActorWithProxy(makeProxy,
+        new AkkaActorType(createAkkaActor(new AkkaEtypedActor(actor, makeImpl))))
+    actor.actorRef.actorRef.start()
     return actor
   }
 

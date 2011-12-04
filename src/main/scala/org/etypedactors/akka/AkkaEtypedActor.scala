@@ -1,10 +1,10 @@
 package org.etypedactors.akka
 
 import akka.actor.Actor
-import org.etypedactors.ActorType
+import org.etypedactors.ActorWithProxy
 import org.etypedactors.ETypedActorMessageHandler
 
-class AkkaEtypedActor(protected val myself: ActorType, makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
+class AkkaEtypedActor(protected val myself: ActorWithProxy[AkkaActorType], makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
 
   lazy protected val impl = makeImpl
 

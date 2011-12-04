@@ -15,7 +15,7 @@ class ETypedActorInvocationHandler(val actor: ActorType) extends InvocationHandl
         actor ! OneWayMethodCall(method, args)
         return null
       case ETypedActorInvocationHandler.PromiseClass =>  // two-way with Resolver
-        val (promise, resolver) = Promise[Any]()(ETypedActor.currentActorInternal)
+        val (promise, resolver) = Promise[Any]()(ETypedActor.currentActorInternal.actorRef)
         actor ! TwoWayMethodCall(method, args, resolver)
         return promise
       case _ =>

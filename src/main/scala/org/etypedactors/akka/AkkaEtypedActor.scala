@@ -9,16 +9,14 @@ import org.etypedactors.Smashing
 import org.etypedactors.ETypedActor
 import org.etypedactors.Promise
 
-class AkkaEtypedActor(makeImpl: => Any, makeActor: => ActorType) extends Actor {
-
-  lazy private val myself = makeActor
+class AkkaEtypedActor(makeImpl: => Any, myself: ActorType) extends Actor {
 
   lazy private val impl = makeImpl
 
   override def preStart() {
     impl // Lazily invoke the factory
   }
-  
+
   @inline private def withSelf(closure: => Unit) {
       ETypedActor.setCurrentActor(myself)
       try {

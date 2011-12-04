@@ -12,6 +12,7 @@ object BasicExample extends App {
 
   trait Service {
     def square(x: Int): Promise[Int]
+    def process(x: Int): Int
   }
 
   class ServiceActor extends Service with Serializable {
@@ -60,7 +61,9 @@ object BasicExample extends App {
 
   client.go(service)
 
-  service.square(100)
+  // The below method calls are unsupported and will throw an exception
+  try { service.square(100) } catch { case ex => log(ex.toString()); ex.printStackTrace(System.out) }
+  try { service.process(100) } catch { case ex => log(ex.toString()); ex.printStackTrace(System.out) }
 
   Thread.sleep(2000)
   log("Shutting down...")

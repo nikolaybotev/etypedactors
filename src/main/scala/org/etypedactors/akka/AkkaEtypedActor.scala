@@ -17,7 +17,7 @@ class AkkaEtypedActor(makeImpl: => Any, myself: ActorType) extends Actor {
     impl // Lazily invoke the factory
   }
 
-  @inline private def withSelf(closure: => Unit) {
+  @inline private def withMyself(closure: => Unit) {
       ETypedActor.setCurrentActor(myself)
       try {
         closure
@@ -28,12 +28,12 @@ class AkkaEtypedActor(makeImpl: => Any, myself: ActorType) extends Actor {
 
   def receive = {
     // One-way fire-and-forget
-    case OneWayMethodCall(m, args) => withSelf {
+    case OneWayMethodCall(m, args) => withMyself {
       m.invoke(impl, args:_*)
     }
 
     // Two-way with resolver
-    case TwoWayMethodCall(m, args, resolver) => withSelf {
+    case TwoWayMethodCall(m, args, resolver) => withMyself {
       try {
         val resultPromise = m.invoke(impl, args:_*).asInstanceOf[Promise[_]]
         resultPromise.when({ result => resolver.resolve(result) }, { case ex => resolver.smash(ex) })
@@ -43,8 +43,8 @@ class AkkaEtypedActor(makeImpl: => Any, myself: ActorType) extends Actor {
     }
 
      // Internal result response messages
-    case Resolution(promise, result) => withSelf { promise.notifyResolved(result) }
-    case Smashing(promise, exception) => withSelf { promise.notifySmashed(exception) }
+    case Resolution(promise, result) => withMyself { promise.notifyResolved(result) }
+    case Smashing(promise, exception) => withMyself { promise.notifySmashed(exception) }
   }
 
 }

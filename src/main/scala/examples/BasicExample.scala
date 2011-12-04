@@ -6,10 +6,6 @@ import org.etypedactors.akka.AkkaETypedActorFactory
 
 object BasicExample extends App {
 
-  def log(msg: String) {
-    println("[" + Thread.currentThread.getName + "] " + msg)
-  }
-
   trait Service {
     def square(x: Int): Promise[Int]
     def process(x: Int): Int
@@ -40,7 +36,7 @@ object BasicExample extends App {
       val future = service.square(10)
       future when { x =>
         log("Client got future result " + x)
-        ETypedActor.currentActor[Client].other(x + 2)
+        ETypedActor.current[Client].other(x + 2)
         Thread.sleep(1000)
         log("Client future callback done.")
       }

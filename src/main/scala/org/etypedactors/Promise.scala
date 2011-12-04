@@ -1,11 +1,30 @@
 package org.etypedactors
 
-object Promise {
-  def apply[T](sender: ActorType): (Promise[T], Resolver[T]) = {
-    if (sender == null) throw new IllegalAccessError("No etyped actor in scope.")
+import scala.reflect.BeanProperty
 
-    val promise = new UnresolvedPromise[T]()
-    val resolver = new Resolver[T](promise, sender)
+case class Future[T](
+    @BeanProperty promise: Promise[T],
+    @BeanProperty resolver: Resolver[T])
+
+object Promise {
+
+  /**
+   * Java API.
+   */
+  def create[T](): Future[T] = {
+    val (promise, resolver) = apply[T]()
+    return Future(promise, resolver)
+  }
+
+  def apply[T](): (Promise[T], Resolver[T]) = {
+    val current = ETypedActor.currentActorWithProxy
+    if (current == null)
+      throw new IllegalArgumentException("No ETypedActor in scope. " +
+          "Promise-returning actor methods can only be called from other ETyped actors. ")
+    val actor: ActorType = current.actorRef
+
+    val promise = new InActorPromise[T]()
+    val resolver = new Resolver[T](promise, actor)
     return (promise, resolver)
   }
 }
@@ -45,7 +64,7 @@ private[etypedactors] final class ResolvedPromise[T](result: T) extends Promise[
   override def when(resultHandler: T => Unit, exceptionHandler: PartialFunction[Exception, Unit] = {case ex=>}) = resultHandler(result)
 }
 
-private[etypedactors] final class UnresolvedPromise[T] extends Promise[T] {
+private[etypedactors] final class InActorPromise[T] extends Promise[T] {
 
   private var listeners: List[PromiseListener[T]] = collection.immutable.List[PromiseListener[T]]()
 
@@ -73,7 +92,7 @@ private[etypedactors] final class UnresolvedPromise[T] extends Promise[T] {
 
 }
 
-private[etypedactors] final class Resolver[T] (val promise: UnresolvedPromise[T], val sender: ActorType) extends Serializable {
+private[etypedactors] final class Resolver[T] (val promise: InActorPromise[T], val sender: ActorType) extends Serializable {
 
   def resolve(result: T) {
     sender ! Resolution(promise, result)

@@ -2,7 +2,7 @@ organization := "org.etypedactors"
 
 name := "etypedactors"
 
-version := "0.2"
+version := "0.2-SNAPSHOT"
 
 resolvers += "Akka" at "http://akka.io/repository"
 

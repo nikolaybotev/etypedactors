@@ -12,7 +12,7 @@ class AkkaActorType(makeActorRef: => ActorRef) {
   def !(message: Any) = actorRef.! (message) (null) // do not care about Akka sender
 }
 
-private class AkkaEtypedActor(
+private class AkkaETypedActor(
     protected val myself: ActorWithProxy[AkkaActorType],
     makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
 
@@ -31,7 +31,7 @@ class AkkaEtypedActorFactory extends ActorFactory[AkkaActorType] {
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 
   def createActor(makeImpl: => Any, makeActor: => ActorWithProxy[AkkaActorType]): AkkaActorType = {
-    new AkkaActorType(createAkkaActor(new AkkaEtypedActor(makeActor, makeImpl)))
+    new AkkaActorType(createAkkaActor(new AkkaETypedActor(makeActor, makeImpl)))
   }
 
   def startActor(actor: AkkaActorType) {

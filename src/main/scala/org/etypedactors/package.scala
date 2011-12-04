@@ -2,7 +2,7 @@ package org
 
 package object etypedactors {
 
-  type ActorType = {
+  trait ActorType {
     def !(message: Any): Unit
   }
 

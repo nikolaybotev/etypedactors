@@ -15,7 +15,7 @@ object BasicExample extends App {
     def process(x: Int): Int
   }
 
-  class ServiceActor extends Service with Serializable {
+  class ServiceActor extends Service {
 
     def process(x: Int) = x*x
 
@@ -33,19 +33,18 @@ object BasicExample extends App {
     def other(other: Any)
   }
 
-  class ClientActor extends Client with Serializable {
+  class ClientActor extends Client {
 
     def go(service: Service) {
-        log("Client enter")
-        val future = service.square(10)
-        future when {
-          x =>
-            log("Client got future result " + x)
-            ETypedActor.currentActor[Client].other(x + 2)
-            Thread.sleep(1000)
-            log("Client future callback done.")
-        }
-        log("Client leave")
+      log("Client enter")
+      val future = service.square(10)
+      future when { x =>
+        log("Client got future result " + x)
+        ETypedActor.currentActor[Client].other(x + 2)
+        Thread.sleep(1000)
+        log("Client future callback done.")
+      }
+      log("Client leave")
     }
 
     def other(other: Any) {

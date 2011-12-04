@@ -12,7 +12,9 @@ class AkkaActorType(makeActorRef: => ActorRef) {
   def !(message: Any) = actorRef.! (message) (null) // do not care about Akka sender
 }
 
-private class AkkaEtypedActor(protected val myself: ActorWithProxy[AkkaActorType], makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
+private class AkkaEtypedActor(
+    protected val myself: ActorWithProxy[AkkaActorType],
+    makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
 
   lazy protected val impl = makeImpl
 

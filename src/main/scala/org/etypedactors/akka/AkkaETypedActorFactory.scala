@@ -7,13 +7,13 @@ import org.etypedactors.ActorFactory
 import org.etypedactors.ActorWithProxy
 import org.etypedactors.ETypedActorMessageHandler
 
-class AkkaActorType(makeActorRef: => ActorRef) extends IdiomaticActor {
+class IdiomaticAkkaActor(makeActorRef: => ActorRef) extends IdiomaticActor {
   lazy val actorRef = makeActorRef
   def !(message: Any) = actorRef.! (message) (null) // do not care about Akka sender
 }
 
 private class AkkaETypedActor(
-    protected val myself: ActorWithProxy[AkkaActorType],
+    protected val myself: ActorWithProxy[IdiomaticAkkaActor],
     makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
 
   lazy protected val impl = makeImpl
@@ -26,20 +26,20 @@ private class AkkaETypedActor(
 
 }
 
-class AkkaETypedActorFactory extends ActorFactory[AkkaActorType] {
+class AkkaETypedActorFactory extends ActorFactory[IdiomaticAkkaActor] {
 
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 
-  def createActor(makeImpl: => Any, makeActor: => ActorWithProxy[AkkaActorType]): AkkaActorType = {
-    new AkkaActorType(createAkkaActor(new AkkaETypedActor(makeActor, makeImpl)))
+  def createActor(makeImpl: => Any, makeActor: => ActorWithProxy[IdiomaticAkkaActor]): IdiomaticAkkaActor = {
+    new IdiomaticAkkaActor(createAkkaActor(new AkkaETypedActor(makeActor, makeImpl)))
   }
 
-  def startActor(actor: AkkaActorType) {
+  def startActor(actor: IdiomaticAkkaActor) {
     actor.actorRef.start()
   }
 
   def stopActor(actor: IdiomaticActor) = actor match {
-    case a:AkkaActorType => a.actorRef.stop
+    case a:IdiomaticAkkaActor => a.actorRef.stop
     case _ => throw new IllegalArgumentException("Not an Akka actor: " + actor)
   }
 

@@ -7,7 +7,7 @@ object ETypedActorInvocationHandler {
   private val PromiseClass = classOf[Promise[_]]
 }
 
-class ETypedActorInvocationHandler(val actor: ActorType) extends InvocationHandler {
+class ETypedActorInvocationHandler(val actor: IdiomaticActor) extends InvocationHandler {
 
   import ETypedActorSystem._
 

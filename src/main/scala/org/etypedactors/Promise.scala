@@ -19,7 +19,7 @@ object Promise {
     if (current == null)
       throw new IllegalArgumentException("No ETypedActor in scope. " +
           "Promise-returning actor methods can only be called from other ETyped actors. ")
-    val actor: ActorType = current.actorRef
+    val actor: IdiomaticActor = current.actorRef
 
     val promise = new InActorPromise[T]()
     val resolver = new Resolver[T](promise, actor)
@@ -90,7 +90,7 @@ private[etypedactors] final class InActorPromise[T] extends Promise[T] {
 
 }
 
-private[etypedactors] final class Resolver[T] (val promise: InActorPromise[T], val sender: ActorType) extends Serializable {
+private[etypedactors] final class Resolver[T] (val promise: InActorPromise[T], val sender: IdiomaticActor) extends Serializable {
 
   def resolve(result: T) {
     sender ! Resolution(promise, result)

@@ -2,21 +2,21 @@ package org
 
 package object etypedactors {
 
-  trait ActorType {
+  trait IdiomaticActor {
     def !(message: Any): Unit
   }
 
-  class ActorWithProxy[T <: ActorType](makeActor: => T, makeProxy: => AnyRef) {
+  class ActorWithProxy[T <: IdiomaticActor](makeActor: => T, makeProxy: => AnyRef) {
     lazy val actorRef = makeActor
     lazy val proxy = makeProxy
   }
 
-  type ActorWithProxyType = ActorWithProxy[_ <: ActorType]
+  type ActorWithProxyType = ActorWithProxy[_ <: IdiomaticActor]
 
-  trait ActorFactory[T <: ActorType] {
+  trait ActorFactory[T <: IdiomaticActor] {
     def createActor(makeImpl: => Any, makeActor: => ActorWithProxy[T]): T
     def startActor(actor: T)
-    def stopActor(actor: ActorType)
+    def stopActor(actor: IdiomaticActor)
   }
 
 }

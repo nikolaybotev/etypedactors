@@ -2,12 +2,12 @@ package org.etypedactors.akka
 
 import akka.actor.Actor
 import akka.actor.ActorRef
-import org.etypedactors.ActorType
+import org.etypedactors.IdiomaticActor
 import org.etypedactors.ActorFactory
 import org.etypedactors.ActorWithProxy
 import org.etypedactors.ETypedActorMessageHandler
 
-class AkkaActorType(makeActorRef: => ActorRef) extends ActorType {
+class AkkaActorType(makeActorRef: => ActorRef) extends IdiomaticActor {
   lazy val actorRef = makeActorRef
   def !(message: Any) = actorRef.! (message) (null) // do not care about Akka sender
 }
@@ -38,9 +38,9 @@ class AkkaETypedActorFactory extends ActorFactory[AkkaActorType] {
     actor.actorRef.start()
   }
 
-  def stopActor(actor: ActorType) = actor match {
+  def stopActor(actor: IdiomaticActor) = actor match {
     case a:AkkaActorType => a.actorRef.stop
-    case _ => throw new IllegalArgumentException("Not an Akka actor - " + actor)
+    case _ => throw new IllegalArgumentException("Not an Akka actor: " + actor)
   }
 
 }

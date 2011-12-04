@@ -15,7 +15,7 @@ class AkkaEtypedActorFactory {
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 
   def createActor(makeImpl: => Any, makeProxy: => AnyRef): ActorType = {
-    lazy val actor: AkkaActorType = new AkkaActorType(makeProxy, createAkkaActor(new AkkaEtypedActor(makeImpl, actor)))
+    lazy val actor: AkkaActorType = new AkkaActorType(makeProxy, createAkkaActor(new AkkaEtypedActor(actor, makeImpl)))
     actor.actorRef.start()
     return actor
   }

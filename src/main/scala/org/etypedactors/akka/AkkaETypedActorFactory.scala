@@ -26,7 +26,7 @@ private class AkkaETypedActor(
 
 }
 
-class AkkaEtypedActorFactory extends ActorFactory[AkkaActorType] {
+class AkkaETypedActorFactory extends ActorFactory[AkkaActorType] {
 
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 

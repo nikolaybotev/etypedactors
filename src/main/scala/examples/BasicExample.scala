@@ -2,7 +2,7 @@ package examples
 
 import org.etypedactors.ETypedActor
 import org.etypedactors.Promise
-import org.etypedactors.akka.AkkaEtypedActorFactory
+import org.etypedactors.akka.AkkaETypedActorFactory
 
 object BasicExample extends App {
 
@@ -53,7 +53,7 @@ object BasicExample extends App {
 
   }
 
-  val etypedSystem = ETypedActor.create(new AkkaEtypedActorFactory())
+  val etypedSystem = ETypedActor.create(new AkkaETypedActorFactory())
 
   val service = etypedSystem.createActor(classOf[Service], new ServiceActor)
   val client = etypedSystem.createActor(classOf[Client], new ClientActor)

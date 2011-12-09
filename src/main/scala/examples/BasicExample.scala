@@ -3,6 +3,7 @@ package examples
 import org.etypedactors.ETypedActorSystem
 import org.etypedactors.Promise
 import org.etypedactors.akka.AkkaETypedActorFactory
+import org.etypedactors.scala.ScalaETypedActorFactory
 
 object BasicExample extends App {
 

@@ -30,7 +30,7 @@ class AkkaETypedActorFactory extends ActorFactory {
 
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 
-  def createActor(makeImpl: => Any, makeActor: => ActorWithProxy): IdiomaticAkkaActor = {
+  def createActor(makeImpl: => Any, makeActor: => ActorWithProxy): IdiomaticActor = {
     new IdiomaticAkkaActor(createAkkaActor(new AkkaETypedActor(makeActor, makeImpl)))
   }
 

@@ -20,7 +20,7 @@ class ETypedActorInvocationHandler(val actor: IdiomaticActor) extends Invocation
       actor ! TwoWayMethodCall(method, args, resolver)
       return promise
     case _ =>
-      throw new IllegalAccessException("ETyped actors only support void methods or methods returning a Promise. " +
+      throw new IllegalStateException("ETyped actors only support void methods or methods returning a Promise. " +
       		"Problematic method: " + method)
   }
 

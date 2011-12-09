@@ -16,7 +16,7 @@ public class BasicExampleJ {
     public int process(int x);
   }
 
-  public class ServiceActor implements Service {
+  public static class ServiceActor implements Service {
 
     public int process(int x) {
       return x*x;
@@ -36,13 +36,13 @@ public class BasicExampleJ {
     public void other(Object other);
   }
 
-  public class ClientActor implements Client {
+  public static class ClientActor implements Client {
 
     public void go(Service service) {
       log("Client enter");
       final Promise<Integer> future = service.square(10);
       future.when(new PromiseListener<Integer>() {
-        public void onResult(Integer x) {
+        public void onResult(Integer x) throws InterruptedException {
           log("Client got future result " + x);
           ETypedActorSystem.<Client>current().other(x + 2);
           Thread.sleep(1000);
@@ -59,11 +59,11 @@ public class BasicExampleJ {
 
   }
 
-  public static void main(String[] args) {
-    final ETypedActorSystem<?> etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory());
+  public static void main(String[] args) throws InterruptedException {
+    final ETypedActorSystem etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory());
 
-    final Service service = etypedSystem.createActor(Service.class, new ServiceActor());
-    final Client client = etypedSystem.createActor(Client.class, new ClientActor());
+    final Service service = etypedSystem.createActor(Service.class, ServiceActor.class);
+    final Client client = etypedSystem.createActor(Client.class, ClientActor.class);
 
     client.go(service);
 

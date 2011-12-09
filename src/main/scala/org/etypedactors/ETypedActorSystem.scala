@@ -6,27 +6,29 @@ import java.lang.reflect.Proxy
 
 object ETypedActorSystem {
 
-  def create(actorFactory: ActorFactory[_ <: IdiomaticActor]) = new ETypedActorSystem(actorFactory)
+  def create(actorFactory: ActorFactory) = new ETypedActorSystem(actorFactory)
 
   def current[T]: T = {
     val current = currentActorWithProxy
     (if (current == null) null else current.proxy).asInstanceOf[T]
   }
 
-  def fulfill[T](value: T) = new ResolvedPromise(value)
+  def fulfill[T](value: T): Promise[T] = new ResolvedPromise[T](value)
 
-  private val currentActorHolder = new ThreadLocal[ActorWithProxyType]()
+  private val currentActorHolder = new ThreadLocal[ActorWithProxy]()
 
-  @inline private[etypedactors] def setCurrentActor(actor: ActorWithProxyType) { currentActorHolder.set(actor) }
+  @inline private[etypedactors] def setCurrentActor(actor: ActorWithProxy) { currentActorHolder.set(actor) }
 
-  @inline implicit private[etypedactors] def currentActorWithProxy: ActorWithProxyType = currentActorHolder.get()
+  @inline implicit private[etypedactors] def currentActorWithProxy: ActorWithProxy = currentActorHolder.get()
 
 }
 
-class ETypedActorSystem[X <: IdiomaticActor](actorFactory: ActorFactory[X]) {
+class ETypedActorSystem(actorFactory: ActorFactory) {
+
+  def createActor[R <: AnyRef, T <: R](interface: Class[R], implClass: Class[T]): R = createActor(interface, implClass.newInstance())
 
   def createActor[R <: AnyRef, T <: R](interface: Class[R], impl: => T): R = {
-    lazy val actor: ActorWithProxy[X] = new ActorWithProxy(actorFactory.createActor(impl, actor), {
+    lazy val actor: ActorWithProxy = new ActorWithProxy(actorFactory.createActor(impl, actor), {
       val handler = new ETypedActorInvocationHandler(actor.actorRef)
       Proxy.newProxyInstance(interface.getClassLoader(), Array[Class[_]](interface), handler)
     })

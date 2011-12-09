@@ -13,7 +13,7 @@ class IdiomaticAkkaActor(makeActorRef: => ActorRef) extends IdiomaticActor {
 }
 
 private class AkkaETypedActor(
-    protected val myself: ActorWithProxy[IdiomaticAkkaActor],
+    protected val myself: ActorWithProxy,
     makeImpl: => Any) extends Actor with ETypedActorMessageHandler {
 
   lazy protected val impl = makeImpl
@@ -26,16 +26,17 @@ private class AkkaETypedActor(
 
 }
 
-class AkkaETypedActorFactory extends ActorFactory[IdiomaticAkkaActor] {
+class AkkaETypedActorFactory extends ActorFactory {
 
   protected def createAkkaActor(f: => Actor) = Actor.actorOf(f)
 
-  def createActor(makeImpl: => Any, makeActor: => ActorWithProxy[IdiomaticAkkaActor]): IdiomaticAkkaActor = {
+  def createActor(makeImpl: => Any, makeActor: => ActorWithProxy): IdiomaticAkkaActor = {
     new IdiomaticAkkaActor(createAkkaActor(new AkkaETypedActor(makeActor, makeImpl)))
   }
 
-  def startActor(actor: IdiomaticAkkaActor) {
-    actor.actorRef.start()
+  def startActor(actor: IdiomaticActor) = actor match {
+    case a: IdiomaticAkkaActor => a.actorRef.start
+    case _ => throw new IllegalArgumentException("Not an Akka actor: " + actor)
   }
 
   def stopActor(actor: IdiomaticActor) = actor match {

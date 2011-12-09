@@ -28,8 +28,8 @@ object Promise {
 }
 
 trait PromiseListener[-T] {
-  def onResult(result: T): Unit
-  def onException(exception: Exception): Unit
+  @throws(classOf[Exception]) def onResult(result: T): Unit
+  @throws(classOf[Exception]) def onException(exception: Exception): Unit
 }
 
 trait Promise[T] extends Serializable {

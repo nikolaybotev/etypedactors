@@ -13,7 +13,7 @@ object ChainedFutureExample extends App {
   class ServiceActor extends Service {
 
     def doit(x: Int): Promise[Int] = {
-      val (p, r) = Promise.apply[Int]()
+      val (p, r) = Promise[Int]()
       log("Processing " + x)
       new Thread("background") {
         override def run {

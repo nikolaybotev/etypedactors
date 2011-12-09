@@ -12,7 +12,7 @@ class IdiomaticScalaActor(makeActorRef: => Actor) extends IdiomaticActor {
 }
 
 private object ScalaETypedActor {
-  case class Exit
+  case object Exit
   val exitHandler: PartialFunction[Any, Unit] = { case Exit => Actor.exit }
 }
 

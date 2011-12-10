@@ -42,10 +42,14 @@ public class BasicExampleJ {
       log("Client enter");
       final Promise<Integer> future = service.square(10);
       future.when(new PromiseListener<Integer>() {
-        public void onResult(Integer x) throws InterruptedException {
+        public void onResult(Integer x) {
           log("Client got future result " + x);
           ETypedActorSystem.<Client>current().other(x + 2);
-          Thread.sleep(1000);
+          try {
+            Thread.sleep(1000);
+          } catch (Exception ex) {
+            // Ignore
+          }
           log("Client future callback done.");
         }
         public void onException(Exception exception) { /* empty */ }

@@ -62,6 +62,7 @@ public class BasicExampleAkkaJ {
   }
 
   public static void main(String[] args) throws InterruptedException {
+
     final Service service = TypedActor.newInstance(Service.class, ServiceActor.class);
     final Client client = TypedActor.newInstance(Client.class, ClientActor.class);
 

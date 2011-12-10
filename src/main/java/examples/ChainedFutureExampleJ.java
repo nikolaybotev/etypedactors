@@ -1,5 +1,6 @@
 package examples;
 
+import org.etypedactors.ETypedActor;
 import org.etypedactors.Future;
 import org.etypedactors.Promise;
 import org.etypedactors.PromiseListener;
@@ -43,13 +44,13 @@ class ChainedFutureExampleJ {
     public void got(int x);
   }
 
-  public static class ClientActor implements Client {
+  public static class ClientActor extends ETypedActor<Client> implements Client {
     public void doit(Service service) {
       log("Client enter");
       service.doit(42).when(new PromiseListener<Integer>() {
         public void onResult(Integer x) throws InterruptedException {
           log("Client got " + x + " in when");
-          ETypedActorSystem.<Client>current().got(x);
+          self().got(x);
           Thread.sleep(500);
           log("Client leaving when");
         }
@@ -61,7 +62,7 @@ class ChainedFutureExampleJ {
     }
     public void got(int x) { log("Client got " + x); }
   }
-  
+
   public static void main(String[] args) throws InterruptedException {
     final ETypedActorSystem etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory());
 

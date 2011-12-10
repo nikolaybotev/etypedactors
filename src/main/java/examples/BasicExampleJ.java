@@ -1,5 +1,6 @@
 package examples;
 
+import org.etypedactors.ETypedActor;
 import org.etypedactors.ETypedActorSystem;
 import org.etypedactors.Promise;
 import org.etypedactors.PromiseListener;
@@ -16,7 +17,7 @@ public class BasicExampleJ {
     public int process(int x);
   }
 
-  public static class ServiceActor implements Service {
+  public static class ServiceActor extends ETypedActor<Service> implements Service {
 
     public int process(int x) {
       return x*x;
@@ -26,7 +27,7 @@ public class BasicExampleJ {
       log("Service enter");
       final int result = process(x);
       log("Service leave");
-      return ETypedActorSystem.fulfill(result);
+      return fulfill(result);
     }
 
   }
@@ -36,7 +37,7 @@ public class BasicExampleJ {
     public void other(Object other);
   }
 
-  public static class ClientActor implements Client {
+  public static class ClientActor extends ETypedActor<Client> implements Client {
 
     public void go(Service service) {
       log("Client enter");
@@ -44,7 +45,7 @@ public class BasicExampleJ {
       future.when(new PromiseListener<Integer>() {
         public void onResult(Integer x) {
           log("Client got future result " + x);
-          ETypedActorSystem.<Client>current().other(x + 2);
+          self().other(x + 2);
           try {
             Thread.sleep(1000);
           } catch (Exception ex) {

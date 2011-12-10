@@ -9,7 +9,8 @@ resolvers += "Akka" at "http://akka.io/repository"
 resolvers += "Guiceyfruit" at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
 
 libraryDependencies ++= Seq(
-  "se.scalablesolutions.akka" % "akka-actor" % "1.2"
+  "se.scalablesolutions.akka" % "akka-actor" % "1.2",
+  "se.scalablesolutions.akka" % "akka-typed-actor" % "1.2"
 )
 
 ivyConfigurations += Default.extend (Compile, Sources, Docs)

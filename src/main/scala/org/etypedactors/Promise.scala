@@ -1,16 +1,20 @@
 package org.etypedactors
 
-case class Future[T](promise: Promise[T], resolver: Resolver[T])
-
-object Promise {
-
+case object Future {
+  
   /**
    * Java API.
    */
   def create[T](): Future[T] = {
-    val (promise, resolver) = apply[T]()
+    val (promise, resolver) = Promise[T]()
     return Future(promise, resolver)
   }
+
+}
+
+case class Future[T](promise: Promise[T], resolver: Resolver[T])
+
+object Promise {
 
   def apply[T](): (Promise[T], Resolver[T]) = {
     val current = ETypedActorSystem.currentActorWithProxy

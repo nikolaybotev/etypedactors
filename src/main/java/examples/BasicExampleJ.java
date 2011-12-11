@@ -34,7 +34,7 @@ public class BasicExampleJ {
 
   public interface Client {
     public void go(Service service);
-    public void other(Object other);
+    public void other(int other);
   }
 
   public static class ClientActor extends ETypedActor<Client> implements Client {
@@ -42,6 +42,7 @@ public class BasicExampleJ {
     public void go(Service service) {
       log("Client enter");
       final Promise<Integer> future = service.square(10);
+      self().other(1);
       future.when(new PromiseListener<Integer>() {
         public void onResult(Integer x) {
           log("Client got future result " + x);
@@ -58,7 +59,7 @@ public class BasicExampleJ {
       log("Client leave");
     }
 
-    public void other(Object other) {
+    public void other(int other) {
       log("Client got message " + other);
     }
 

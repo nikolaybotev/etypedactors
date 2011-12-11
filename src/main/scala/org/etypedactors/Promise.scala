@@ -34,6 +34,10 @@ trait PromiseListener[-T] {
   @throws(classOf[Exception]) def onException(exception: Exception): Unit
 }
 
+abstract class ResultListener[-T] extends PromiseListener[T] {
+  override def onException(exception: Exception): Unit = throw(exception)
+}
+
 trait Promise[T] extends Serializable {
 
   def isResolved: Boolean
@@ -83,11 +87,17 @@ private[etypedactors] final class InActorPromise[T] extends Promise[T] {
   }
 
   private[etypedactors] def notifyResolved(result: T) {
-    for (listener <- listeners) listener onResult result
+    if (resolution == null) {
+      resolution = Left(result)
+      for (listener <- listeners) listener onResult result
+    }
   }
 
   private [etypedactors] def notifySmashed(exception: Exception) {
-    for (listener <- listeners) listener onException exception
+    if (resolution == null) {
+      resolution = Right(exception)
+      for (listener <- listeners) listener onException exception
+    }
   }
 
 }

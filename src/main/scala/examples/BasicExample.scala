@@ -36,6 +36,7 @@ object BasicExample extends App {
     def go(service: Service) {
       log("Client enter")
       val future = service.square(10)
+      self.other(1)
       future whenComplete { x =>
         log("Client got future result " + x)
         self.other(x + 2)

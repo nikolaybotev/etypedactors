@@ -32,7 +32,7 @@ public class BasicExampleAkkaJ {
 
   public interface Client {
     public void go(Service service);
-    public void other(Object other);
+    public void other(int other);
   }
 
   public static class ClientActor extends TypedActor implements Client {
@@ -40,6 +40,7 @@ public class BasicExampleAkkaJ {
     public void go(Service service) {
       log("Client enter");
       final Future<Integer> future = service.square(10);
+      getContext().<Client>getSelfAs().other(1);
       future.onResult(new Procedure<Integer>() {
         public void apply(Integer x) {
           log("Client got future result " + x);
@@ -55,7 +56,7 @@ public class BasicExampleAkkaJ {
       log("Client leave");
     }
 
-    public void other(Object other) {
+    public void other(int other) {
       log("Client got message " + other);
     }
 

@@ -37,7 +37,7 @@ object ChainedFutureExample extends App {
   class ClientActor extends ETypedActor[Client] with Client {
     def doit(service: Service) {
       log("Client enter")
-      service.doit(42) when { x =>
+      service.doit(42) whenComplete { x =>
         log("Client got " + x + " in when")
         self.got(x)
         Thread.sleep(500)

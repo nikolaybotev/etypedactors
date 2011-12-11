@@ -30,7 +30,7 @@ public class BasicExampleAkkaJ {
 
   }
 
-  public interface  Client {
+  public interface Client {
     public void go(Service service);
     public void other(Object other);
   }

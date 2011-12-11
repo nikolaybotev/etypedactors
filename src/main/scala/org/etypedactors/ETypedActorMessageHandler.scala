@@ -25,7 +25,7 @@ trait ETypedActorMessageHandler {
     case TwoWayMethodCall(m, args, resolver) => withMyself {
       try {
         val resultPromise = m.invoke(impl, args:_*).asInstanceOf[Promise[_]]
-        resultPromise.when({ result => resolver.resolve(result) }, { case ex => resolver.smash(ex) })
+        resultPromise.whenComplete({ result => resolver.resolve(result) }, { case ex => resolver.smash(ex) })
       } catch {
         case exception: Exception => resolver.smash(exception)
       }

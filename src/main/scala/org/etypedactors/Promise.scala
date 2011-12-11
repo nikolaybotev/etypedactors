@@ -1,7 +1,7 @@
 package org.etypedactors
 
 case object Future {
-  
+
   /**
    * Java API.
    */
@@ -46,7 +46,7 @@ trait Promise[T] extends Serializable {
 
   def when(listener: PromiseListener[T])
 
-  def when(resultHandler: T => Unit, exceptionHandler: PartialFunction[Exception, Unit] = {case ex=>}) {
+  def whenComplete(resultHandler: T => Unit, exceptionHandler: PartialFunction[Exception, Unit] = {case e => throw e}) {
     when(new PromiseListener[T] {
       def onResult(result: T) = resultHandler(result)
       def onException(exception: Exception) = exceptionHandler(exception)
@@ -61,7 +61,7 @@ private[etypedactors] final class ResolvedPromise[T](result: T) extends Promise[
   def getValue = result
   def getException = null
   def when(listener: PromiseListener[T]) = listener.onResult(result)
-  override def when(resultHandler: T => Unit, exceptionHandler: PartialFunction[Exception, Unit] = {case ex=>}) = resultHandler(result)
+  override def whenComplete(resultHandler: T => Unit, exceptionHandler: PartialFunction[Exception, Unit] = {case ex=>}) = resultHandler(result)
 }
 
 private[etypedactors] final class InActorPromise[T] extends Promise[T] {

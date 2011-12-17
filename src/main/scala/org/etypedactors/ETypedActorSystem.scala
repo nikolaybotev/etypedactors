@@ -13,25 +13,25 @@ object ETypedActorSystem {
 
   def fulfill[T](value: T): Promise[T] = new ResolvedPromise[T](value)
 
-  private val currentActorHolder = new ThreadLocal[ActorWithProxy]()
+  private[etypedactors] val currentActorHolder = new ThreadLocal[ActorWithProxy]()
 
-  @inline private[etypedactors] def setCurrentActor(actor: ActorWithProxy) { currentActorHolder.set(actor) }
+  @inline private[etypedactors] def currentActorWithProxy_=(actor: ActorWithProxy) { currentActorHolder.set(actor) }
 
   @inline implicit private[etypedactors] def currentActorWithProxy: ActorWithProxy = currentActorHolder.get()
 
 }
 
-class ETypedActorSystem(actorFactory: ActorFactory) {
+class ETypedActorSystem(private val actorFactory: ActorFactory) {
 
   def createActor[R <: AnyRef, T <: R](interface: Class[R], implClass: Class[T]): R = createActor(interface, implClass.newInstance())
 
   def createActor[R <: AnyRef, T <: R](interface: Class[R], impl: => T): R = {
     lazy val actor: ActorWithProxy = new ActorWithProxy(actorFactory.createActor(impl, actor), {
       val handler = new ETypedActorInvocationHandler(actor.actorRef)
-      Proxy.newProxyInstance(interface.getClassLoader(), Array[Class[_]](interface), handler)
+      Proxy.newProxyInstance(interface.getClassLoader, Array[Class[_]](interface), handler)
     })
     actorFactory.startActor(actor.actorRef)
-    return actor.proxy.asInstanceOf[R]
+    actor.proxy.asInstanceOf[R]
   }
 
   def stop(etypedActor: AnyRef) {

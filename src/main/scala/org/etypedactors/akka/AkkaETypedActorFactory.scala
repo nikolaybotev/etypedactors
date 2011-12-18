@@ -19,7 +19,7 @@ private class AkkaETypedActor(
   lazy protected val impl = makeImpl
 
   override def preStart() {
-    impl // Lazily invoke the factory
+    withMyself { impl } // Lazily invoke the factory
   }
 
   def receive = messageHandler

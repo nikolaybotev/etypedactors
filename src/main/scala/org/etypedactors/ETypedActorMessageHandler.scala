@@ -6,7 +6,7 @@ trait ETypedActorMessageHandler {
 
   protected val impl: Any
 
-  @inline private def withMyself(closure: => Unit) {
+  @inline protected def withMyself(closure: => Unit) {
       ETypedActorSystem.currentActorWithProxy = myself
       try {
         closure

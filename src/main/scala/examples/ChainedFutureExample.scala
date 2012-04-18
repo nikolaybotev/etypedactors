@@ -4,6 +4,7 @@ import org.etypedactors.ETypedActor
 import org.etypedactors.ETypedActorSystem
 import org.etypedactors.Promise
 import org.etypedactors.akka.AkkaETypedActorFactory
+import akka.actor.ActorSystem
 
 object ChainedFutureExample extends App {
 
@@ -48,7 +49,8 @@ object ChainedFutureExample extends App {
     def got(x: Int) { log("Client got " + x) }
   }
 
-  val etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory())
+  val akkaSystem = ActorSystem("chained")
+  val etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory(akkaSystem))
 
   val service = etypedSystem.createActor(classOf[Service], new ServiceActor)
   val client = etypedSystem.createActor(classOf[Client], new ClientActor)
@@ -62,6 +64,7 @@ object ChainedFutureExample extends App {
   log("Shutting down")
   etypedSystem.stop(service)
   etypedSystem.stop(client)
+  akkaSystem.shutdown()
   log("Shutdown complete")
 
 }

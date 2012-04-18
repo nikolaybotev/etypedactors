@@ -7,6 +7,8 @@ import org.etypedactors.PromiseListener;
 import org.etypedactors.ETypedActorSystem;
 import org.etypedactors.akka.AkkaETypedActorFactory;
 
+import akka.actor.ActorSystem;
+
 class ChainedFutureExampleJ {
 
   public static void log(String msg) {
@@ -64,7 +66,8 @@ class ChainedFutureExampleJ {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    final ETypedActorSystem etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory());
+    final ActorSystem akkaSystem = ActorSystem.create("basic");
+    final ETypedActorSystem etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory(akkaSystem));
 
     final Service service = etypedSystem.createActor(Service.class, ServiceActor.class);
     final Client client = etypedSystem.createActor(Client.class, ClientActor.class);
@@ -78,6 +81,7 @@ class ChainedFutureExampleJ {
     log("Shutting down");
     etypedSystem.stop(service);
     etypedSystem.stop(client);
+    akkaSystem.shutdown();
     log("Shutdown complete");
   }
 

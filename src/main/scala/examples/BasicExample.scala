@@ -5,6 +5,7 @@ import org.etypedactors.ETypedActorSystem
 import org.etypedactors.Promise
 import org.etypedactors.akka.AkkaETypedActorFactory
 import org.etypedactors.scala.ScalaETypedActorFactory
+import akka.actor.ActorSystem
 
 object BasicExample extends App {
 
@@ -52,7 +53,8 @@ object BasicExample extends App {
 
   }
 
-  val etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory())
+  val akkaSystem = ActorSystem("basic")
+  val etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory(akkaSystem))
 
   val service = etypedSystem.createActor(classOf[Service], new ServiceActor)
   val client = etypedSystem.createActor(classOf[Client], new ClientActor)
@@ -67,6 +69,7 @@ object BasicExample extends App {
   log("Shutting down...")
   etypedSystem.stop(client)
   etypedSystem.stop(service)
+  akkaSystem.shutdown()
   log("Shutdown complete.")
 
 }

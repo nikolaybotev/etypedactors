@@ -2,20 +2,20 @@ organization := "org.etypedactors"
 
 name := "etypedactors"
 
-version := "0.2-SNAPSHOT"
+version := "0.3-SNAPSHOT"
 
-resolvers += "Akka" at "http://akka.io/repository"
-
-resolvers += "Guiceyfruit" at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
+resolvers += "Akka" at "http://repo.akka.io/releases"
 
 libraryDependencies ++= Seq(
-  "se.scalablesolutions.akka" % "akka-actor" % "1.2",
-  "se.scalablesolutions.akka" % "akka-typed-actor" % "1.2"
+  "com.typesafe.akka" % "akka-actor" % "2.0.1"
 )
 
-ivyConfigurations += Default.extend (Compile, Sources, Docs)
+//ivyConfigurations += Default.extend (Compile, Sources, Docs)
 
-artifact in (Compile, packageDoc) ~= { _.copy(`type` = "javadoc") }
+//artifact in (Compile, packageDoc) ~= { _.copy(`type` = "javadoc") }
 
-artifact in (Compile, packageSrc) ~= { _.copy(`type` = "source") }
+//artifact in (Compile, packageSrc) ~= { _.copy(`type` = "source") }
 
+EclipseKeys.withSource := true
+
+EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE17)

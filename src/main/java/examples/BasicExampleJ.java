@@ -6,6 +6,8 @@ import org.etypedactors.Promise;
 import org.etypedactors.PromiseListener;
 import org.etypedactors.akka.AkkaETypedActorFactory;
 
+import akka.actor.ActorSystem;
+
 public class BasicExampleJ {
 
   public static void log(String msg) {
@@ -66,7 +68,8 @@ public class BasicExampleJ {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    final ETypedActorSystem etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory());
+    final ActorSystem akkaSystem = ActorSystem.create("basic");
+    final ETypedActorSystem etypedSystem = ETypedActorSystem.create(new AkkaETypedActorFactory(akkaSystem));
 
     final Service service = etypedSystem.createActor(Service.class, ServiceActor.class);
     final Client client = etypedSystem.createActor(Client.class, ClientActor.class);
@@ -81,6 +84,7 @@ public class BasicExampleJ {
     log("Shutting down...");
     etypedSystem.stop(client);
     etypedSystem.stop(service);
+    akkaSystem.shutdown();
     log("Shutdown complete.");
   }
 

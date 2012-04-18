@@ -1,8 +1,12 @@
 package examples;
 
+import akka.actor.ActorSystem;
 import akka.actor.TypedActor;
+import akka.actor.TypedActorExtension;
+import akka.actor.TypedProps;
 import akka.dispatch.Future;
-import akka.japi.Procedure;
+import akka.dispatch.Futures;
+import akka.dispatch.OnSuccess;
 
 public class BasicExampleAkkaJ {
 
@@ -15,7 +19,7 @@ public class BasicExampleAkkaJ {
     public int process(int x);
   }
 
-  public static class ServiceActor extends TypedActor implements Service {
+  public static class ServiceActor implements Service {
 
     public int process(int x) {
       return x*x;
@@ -25,7 +29,7 @@ public class BasicExampleAkkaJ {
       log("Service enter");
       final int result = process(x);
       log("Service leave");
-      return future(result);
+      return Futures.successful(result, null);
     }
 
   }
@@ -35,16 +39,16 @@ public class BasicExampleAkkaJ {
     public void other(int other);
   }
 
-  public static class ClientActor extends TypedActor implements Client {
+  public static class ClientActor implements Client {
 
     public void go(Service service) {
       log("Client enter");
       final Future<Integer> future = service.square(10);
-      getContext().<Client>getSelfAs().other(1);
-      future.onResult(new Procedure<Integer>() {
-        public void apply(Integer x) {
+      TypedActor.<Client>self().other(1);
+      future.onSuccess(new OnSuccess<Integer>() {
+        public void onSuccess(Integer x) {
           log("Client got future result " + x);
-          getContext().<Client>getSelfAs().other(x + 2);
+          TypedActor.<Client>self().other(x + 2);
           try {
             Thread.sleep(1000);
           } catch (Exception ex) {
@@ -63,9 +67,12 @@ public class BasicExampleAkkaJ {
   }
 
   public static void main(String[] args) throws InterruptedException {
+    
+    final ActorSystem actorSystem = ActorSystem.create("basicJ");
+    final TypedActorExtension typedActors = TypedActor.get(actorSystem);
 
-    final Service service = TypedActor.newInstance(Service.class, ServiceActor.class);
-    final Client client = TypedActor.newInstance(Client.class, ClientActor.class);
+    final Service service =  typedActors.typedActorOf(new TypedProps<ServiceActor>(Service.class, ServiceActor.class));
+    final Client client = typedActors.typedActorOf(new TypedProps<ClientActor>(Client.class, ClientActor.class));
 
     client.go(service);
 
@@ -75,8 +82,9 @@ public class BasicExampleAkkaJ {
 
     Thread.sleep(2000);
     log("Shutting down...");
-    TypedActor.stop(client);
-    TypedActor.stop(service);
+    typedActors.stop(client);
+    typedActors.stop(service);
+    actorSystem.shutdown();
     log("Shutdown complete.");
   }
 

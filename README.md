@@ -1,4 +1,4 @@
-= E-typed Actors =
+# E-typed Actors
 
 Typed actors for Scala and Java with E-style integrated promises.
 

@@ -4,7 +4,7 @@ import akka.actor.ActorSystem;
 import akka.actor.TypedActor;
 import akka.actor.TypedActorExtension;
 import akka.actor.TypedProps;
-import akka.dispatch.Future;
+import scala.concurrent.Future;
 import akka.dispatch.Futures;
 import akka.dispatch.OnSuccess;
 
@@ -29,7 +29,7 @@ public class BasicExampleAkkaJ {
       log("Service enter");
       final int result = process(x);
       log("Service leave");
-      return Futures.successful(result, null);
+      return Futures.successful(result);
     }
 
   }
@@ -56,7 +56,7 @@ public class BasicExampleAkkaJ {
           }
           log("Client future callback done.");
         }
-      });
+      }, TypedActor.context().dispatcher());
       log("Client leave");
     }
 

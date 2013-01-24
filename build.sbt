@@ -4,10 +4,12 @@ name := "etypedactors"
 
 version := "0.3-SNAPSHOT"
 
+scalaVersion := "2.10.0"
+
 resolvers += "Akka" at "http://repo.akka.io/releases"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" % "akka-actor" % "2.0.1"
+  "com.typesafe.akka" % "akka-actor_2.10" % "2.1.0"
 )
 
 //ivyConfigurations += Default.extend (Compile, Sources, Docs)
